@@ -1,0 +1,151 @@
+{
+  "name": "Revive Memories Video Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mocking the image processing loop for now\n// In production, this would loop through 'images' array from webhook body\nreturn items[0].json.images.map(img => ({ json: { url: img } }));"
+      },
+      "name": "Split Images",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.replicate.com/v1/predictions",
+        "method": "POST",
+        "headerParametersUi": {
+          "parameter": [
+            {
+              "name": "Authorization",
+              "value": "Token {{ $env.REPLICATE_API_TOKEN }}"
+            }
+          ]
+        },
+        "bodyParametersUi": {
+          "parameter": [
+            {
+              "name": "version",
+              "value": "stable-video-diffusion-img2vid-xt"
+            },
+            {
+              "name": "input",
+              "value": "={{ {\"image\": $json.url} }}"
+            }
+          ]
+        }
+      },
+      "name": "Replicate API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Collect all video URLs\nconst videos = items.map(item => item.json.output);\nreturn [{ json: { videos } }];"
+      },
+      "name": "Merge Videos",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.shotstack.io/edit/stage/render",
+        "method": "POST",
+        "headerParametersUi": {
+          "parameter": [
+            {
+              "name": "x-api-key",
+              "value": "{{ $env.SHOTSTACK_API_KEY }}"
+            }
+          ]
+        },
+        "bodyParametersUi": {
+          "parameter": [
+            {
+              "name": "timeline",
+              "value": "={{ {\"tracks\": [{\"clips\": $json.videos.map(v => ({ \"asset\": { \"type\": \"video\", \"src\": v } }))}]} }}"
+            }
+          ]
+        }
+      },
+      "name": "Shotstack Stitch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Split Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Images": {
+      "main": [
+        [
+          {
+            "node": "Replicate API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replicate API": {
+      "main": [
+        [
+          {
+            "node": "Merge Videos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Videos": {
+      "main": [
+        [
+          {
+            "node": "Shotstack Stitch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

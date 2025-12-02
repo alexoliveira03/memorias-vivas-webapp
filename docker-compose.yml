@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  webapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: memorias-vivas:latest
+    ports:
+      - "3001:3000"
+    env_file:
+      - .env.production
+    restart: unless-stopped
+    networks:
+      - memorias-vivas-net
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+networks:
+  memorias-vivas-net:
+    driver: overlay
+    attachable: true
