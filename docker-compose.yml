@@ -15,7 +15,7 @@ services:
       - memorias-vivas-net
     deploy:
       mode: replicated
-      replicas: 2
+      replicas: 2  # 2 replicas para alta disponibilidade
       update_config:
         parallelism: 1
         delay: 10s
@@ -27,11 +27,11 @@ services:
         max_attempts: 3
       resources:
         limits:
-          cpus: '1'
-          memory: 1G
+          cpus: '0.75'     # 75% CPU por réplica
+          memory: 768M     # 768MB RAM por réplica
         reservations:
-          cpus: '0.5'
-          memory: 512M
+          cpus: '0.25'     # Mínimo 25% CPU
+          memory: 256M     # Mínimo 256MB RAM
 
 networks:
   memorias-vivas-net:
