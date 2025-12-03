@@ -13,6 +13,7 @@ services:
     restart: unless-stopped
     networks:
       - memorias-vivas-net
+      - traefik-public  # Connect to Traefik network
     deploy:
       mode: replicated
       replicas: 2  # 2 replicas para alta disponibilidade
@@ -32,8 +33,20 @@ services:
         reservations:
           cpus: '0.25'     # Mínimo 25% CPU
           memory: 256M     # Mínimo 256MB RAM
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.memorias-vivas.rule=Host(`living-memories.net`) || Host(`www.living-memories.net`)"
+        - "traefik.http.routers.memorias-vivas.entrypoints=web,websecure"
+        - "traefik.http.services.memorias-vivas.loadbalancer.server.port=3000"
+        - "traefik.http.routers.memorias-vivas.service=memorias-vivas"
+        # Redirect www to non-www
+        - "traefik.http.middlewares.memorias-vivas-redirect.redirectregex.regex=^https://www\\.(.+)"
+        - "traefik.http.middlewares.memorias-vivas-redirect.redirectregex.replacement=https://$${1}"
+        - "traefik.http.routers.memorias-vivas.middlewares=memorias-vivas-redirect"
 
 networks:
   memorias-vivas-net:
     driver: overlay
     attachable: true
+  traefik-public:
+    external: true  # Use existing Traefik network
