@@ -1,6 +1,6 @@
 "use client";
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, CheckCircle, Loader2 } from 'lucide-react';
+import { X, CheckCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function PaymentModal({ isOpen, onClose, title, message, type = 'success', loading = false }) {
@@ -51,9 +51,18 @@ export default function PaymentModal({ isOpen, onClose, title, message, type = '
                             </div>
                         )}
 
-                        <p className="text-gray-300 leading-relaxed mb-6">
+                        <p className="text-gray-300 leading-relaxed mb-4">
                             {message}
                         </p>
+
+                        {!loading && type === 'success' && (
+                            <div className="w-full mb-6 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center gap-3">
+                                <AlertTriangle size={20} className="text-amber-400 flex-shrink-0" />
+                                <p className="text-sm text-amber-200 text-left">
+                                    {t('deliveryTimeWarning')}
+                                </p>
+                            </div>
+                        )}
 
                         {!loading && (
                             <button

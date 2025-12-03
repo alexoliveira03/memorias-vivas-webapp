@@ -199,8 +199,6 @@ function LandingPage() {
                 </div>
             </nav>
 
-            <FreeTrialBanner onLogin={handleLogin} user={user} />
-
             {/* Hero Section */}
             <main className="flex-1 flex flex-col">
                 <section className="min-h-screen flex items-center justify-center px-6 pt-24 pb-16 relative overflow-hidden">
@@ -301,28 +299,21 @@ function LandingPage() {
                             <p className="text-gray-400 max-w-2xl mx-auto">{t('createDesc')}</p>
                         </div>
 
-                        <div className="flex flex-col lg:flex-row gap-8 h-[800px] glass rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                            {/* Left Sidebar - Controls */}
-                            <aside className="w-full lg:w-[450px] bg-[#0a0a0f]/50 border-r border-white/5 overflow-y-auto p-8 flex flex-col gap-8">
+                        <div className="flex flex-col lg:flex-row gap-8 glass rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
+                            {/* Left Sidebar - Controls (Mobile: shows first) */}
+                            <aside className="w-full lg:w-[450px] bg-[#0a0a0f]/50 lg:border-r border-white/5 overflow-y-auto p-8 flex flex-col gap-8 order-1 lg:order-1">
 
                                 {/* Banner */}
                                 <div className="w-full py-3 px-4 rounded-xl glass bg-white/5 border border-white/10 text-center">
                                     <span className="text-sm font-medium text-gray-300">
-                                        {lang === 'pt-BR' ? 'Clique abaixo para escolher suas fotos' : 'Click below to choose your photos'}
+                                        {lang === 'pt-BR'
+                                            ? 'Clique no espaço ao lado para enviar suas fotos'
+                                            : 'Click on the space to the right to upload your photos'}
                                     </span>
                                 </div>
 
-                                {/* Upload */}
-                                <div className="space-y-4">
-                                    <div className="flex items-center justify-between">
-                                        <label className="text-sm font-bold text-gray-200">{t('photos')}</label>
-                                        <span className="text-xs font-medium text-gray-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/5">{images.length}/10</span>
-                                    </div>
-                                    <PhotoUpload images={images} setImages={setImages} />
-                                </div>
-
                                 {/* Duration Selector */}
-                                <div className="space-y-4">
+                                <div className="space-y-4 order-2 lg:order-1">
                                     <label className="text-sm font-bold text-gray-200 block">{t('durationTitle')}</label>
                                     <div className="grid grid-cols-2 gap-3">
                                         {[5, 10].map((d) => (
@@ -349,7 +340,7 @@ function LandingPage() {
 
 
                                 {/* Generate Button */}
-                                <div className="mt-6">
+                                <div className="mt-6 order-3 lg:order-2">
                                     <button
                                         onClick={handleGenerate}
                                         disabled={images.length === 0 || uploading}
@@ -384,8 +375,8 @@ function LandingPage() {
                                 </div>
                             </aside>
 
-                            {/* Right Preview Area */}
-                            <main className="flex-1 bg-black/40 flex items-center justify-center p-8 relative">
+                            {/* Right Upload/Preview Area (Mobile: shows second) */}
+                            <main className="flex-1 bg-black/40 flex items-center justify-center p-6 lg:p-8 relative order-2 lg:order-2">
                                 {images.length > 0 ? (
                                     <div className="w-full max-w-3xl flex flex-col gap-6">
                                         {/* Main Preview */}
@@ -444,14 +435,15 @@ function LandingPage() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="text-center max-w-md">
-                                        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 flex items-center justify-center mx-auto mb-8 shadow-2xl rotate-3">
-                                            <ImageIcon size={40} className="text-gray-500" />
+                                    <div className="w-full max-w-2xl">
+                                        {/* Upload Area - Shows on Mobile below banner */}
+                                        <div className="mb-8 lg:mb-0">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <label className="text-sm font-bold text-gray-200">{t('photos')}</label>
+                                                <span className="text-xs font-medium text-gray-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/5">{images.length}/10</span>
+                                            </div>
+                                            <PhotoUpload images={images} setImages={setImages} />
                                         </div>
-                                        <h3 className="text-3xl font-bold mb-4">{t('readyToCreate')}</h3>
-                                        <p className="text-gray-400 text-lg leading-relaxed">
-                                            {t('readyDesc')}
-                                        </p>
                                     </div>
                                 )}
                             </main>
@@ -527,6 +519,13 @@ function LandingPage() {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </section>
+
+                {/* Free Trial Banner */}
+                <section className="py-16 bg-gradient-to-b from-[#0a0a0f] to-[#020205] border-y border-white/5">
+                    <div className="container mx-auto px-6">
+                        <FreeTrialBanner onLogin={handleLogin} user={user} />
                     </div>
                 </section>
 

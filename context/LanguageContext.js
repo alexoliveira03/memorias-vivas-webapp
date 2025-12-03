@@ -50,6 +50,7 @@ const translations = {
         deliveryPhonePlaceholder: '(11) 98765-4321',
         deliverySubmit: 'Confirmar e Gerar Vídeo',
         deliverySuccess: 'Perfeito! Seu vídeo está sendo gerado e será enviado em breve.',
+        deliveryTimeWarning: 'O prazo de geração pode levar até 1h',
         deliveryValidationEmail: 'Por favor, insira um email válido',
         deliveryValidationPhone: 'Por favor, insira um número válido com DDD',
         freeTrialBanner: 'Quer testar grátis? Faça login com sua conta do Google e ganhe um vídeo com até 3 fotos',
@@ -60,12 +61,20 @@ const translations = {
         dismissBanner: 'Dispensar',
         faq: [
             {
-                q: 'Por que eu preciso pagar?',
-                a: 'Nosso objetivo é facilitar a animação de memórias com IA e permitir que qualquer um possa criar um vídeo legal simplesmente enviando suas fotos. No entanto, a tecnologia de IA de ponta que utilizamos tem custos elevados de processamento para cada geração.'
+                q: 'Posso tirar foto da foto para enviar?',
+                a: 'Sim! Você pode enviar fotos de fotos antigas, quadros ou porta-retratos. Para melhores resultados, tente enquadrar bem a imagem e capture com a melhor qualidade possível. Evite reflexos e, se estiver fotografando um quadro ou porta-retrato com vidro, não use flash para evitar brilhos indesejados.'
+            },
+            {
+                q: 'Quanto tempo demora?',
+                a: 'A geração do vídeo depende da quantidade de imagens enviadas e pode levar de 30 minutos a 1 hora. Você receberá seu vídeo no meio de entrega escolhido (e-mail ou WhatsApp) assim que estiver pronto.'
+            },
+            {
+                q: 'E se eu não receber meu vídeo?',
+                a: 'Se você não receber seu vídeo, nos envie um e-mail com: seu nome, meio de recebimento escolhido, informação de contato, valor pago, data do pedido e hora aproximada. Vamos verificar o que aconteceu e ou te enviar seu vídeo, ou fazer seu reembolso.'
             },
             {
                 q: 'Tem algum plano gratuito?',
-                a: 'Sim! Faça login com sua conta Google e ganhe 1 vídeo grátis com até 3 fotos. Após isso, cada geração é paga.'
+                a: 'Infelizmente não temos um plano gratuito permanente, já que os custos de geração com IA são muito elevados para cada vídeo. Porém, você pode fazer um teste grátis! Basta fazer login com sua conta do Google e gerar 1 vídeo grátis com até 3 fotos.'
             },
             {
                 q: 'Quantos vídeos serão gerados?',
@@ -129,6 +138,7 @@ const translations = {
         deliveryPhonePlaceholder: '(11) 98765-4321',
         deliverySubmit: 'Confirm and Generate Video',
         deliverySuccess: 'Perfect! Your video is being generated and will be sent soon.',
+        deliveryTimeWarning: 'Generation time may take up to 1 hour',
         deliveryValidationEmail: 'Please enter a valid email',
         deliveryValidationPhone: 'Please enter a valid number with area code',
         freeTrialBanner: 'Want to test for free? Log in with your Google account and get a video with up to 3 photos',
@@ -139,12 +149,20 @@ const translations = {
         dismissBanner: 'Dismiss',
         faq: [
             {
-                q: 'Why do I need to pay?',
-                a: 'Our goal is to make AI memory animation accessible to everyone. However, the cutting-edge AI technology we use incurs high processing costs for each video generation.'
+                q: 'Can I take a photo of a photo?',
+                a: 'Yes! You can upload photos of old photos, frames, or photo frames. For best results, try to frame the image well and capture it with the best possible quality. Avoid reflections and, if photographing a frame or photo frame with glass, don\'t use flash to avoid unwanted glare.'
+            },
+            {
+                q: 'How long does it take?',
+                a: 'Video generation depends on the number of images submitted and can take 30 minutes to 1 hour. You will receive your video via your chosen delivery method (email or WhatsApp) as soon as it\'s ready.'
+            },
+            {
+                q: 'What if I don\'t receive my video?',
+                a: 'If you don\'t receive your video, send us an email with: your name, chosen delivery method, contact information, amount paid, order date and approximate time. We will check what happened and either send you your video or issue a refund.'
             },
             {
                 q: 'Is there a free plan?',
-                a: 'Yes! Log in with your Google account and get 1 free video with up to 3 photos. After that, each generation is paid.'
+                a: 'Unfortunately, we don\'t have a permanent free plan, as the AI generation costs are very high for each video. However, you can try it for free! Just log in with your Google account and generate 1 free video with up to 3 photos.'
             },
             {
                 q: 'How many videos will be generated?',
