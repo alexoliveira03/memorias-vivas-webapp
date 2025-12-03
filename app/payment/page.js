@@ -1,10 +1,12 @@
 "use client";
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Check, Shield, Zap } from 'lucide-react';
+import { Check, Shield, Zap, Gift } from 'lucide-react';
 import { useLanguage, LanguageProvider } from '../../context/LanguageContext';
 import PaymentModal from '../../components/PaymentModal';
 import DeliveryChoiceModal from '../../components/DeliveryChoiceModal';
+import { db } from '../../lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 function PaymentPageContent() {
     const { t, lang } = useLanguage();
@@ -64,6 +66,7 @@ function PaymentPageContent() {
                 duration: orderData.duration, // Video duration (5 or 10 seconds)
                 deliveryMethod, // 'email' or 'whatsapp'
                 deliveryContact, // email address or phone number
+                isFreeTrial: orderData.isFreeTrial || false
             };
 
             console.log('[Payment Success] n8n payload:', n8nPayload);
@@ -78,6 +81,19 @@ function PaymentPageContent() {
 
             if (n8nResponse.ok) {
                 console.log('[Payment Success] n8n workflow triggered successfully');
+
+                // If it was a free trial, mark it as used in Firestore
+                if (orderData.isFreeTrial && orderData.userId) {
+                    try {
+                        await setDoc(doc(db, 'users', orderData.userId), {
+                            freeTrialUsed: true,
+                            lastUpdated: new Date()
+                        }, { merge: true });
+                        console.log('Free trial marked as used for user:', orderData.userId);
+                    } catch (err) {
+                        console.error('Error marking free trial as used:', err);
+                    }
+                }
             } else {
                 console.error('[Payment Success] n8n workflow trigger failed:', await n8nResponse.text());
             }
@@ -103,6 +119,15 @@ function PaymentPageContent() {
 
     const handlePayment = async () => {
         setLoading(true);
+
+        // Check for free trial
+        if (orderData.isFreeTrial) {
+            console.log('[Payment] Processing free trial...');
+            setShowDeliveryChoice(true);
+            setLoading(false);
+            return;
+        }
+
         console.log('[Payment] Starting payment process...');
 
         try {
@@ -175,7 +200,9 @@ function PaymentPageContent() {
                         </div>
                         <div className="flex items-center justify-between py-4 text-xl font-bold">
                             <span>Total</span>
-                            <span className="text-violet-400">{currency === 'BRL' ? 'R$' : '$'} {totalPrice}</span>
+                            <span className={orderData.isFreeTrial ? "text-emerald-400" : "text-violet-400"}>
+                                {orderData.isFreeTrial ? (lang === 'pt-BR' ? 'GRÁTIS' : 'FREE') : `${currency === 'BRL' ? 'R$' : '$'} ${totalPrice}`}
+                            </span>
                         </div>
                     </div>
 
@@ -209,6 +236,11 @@ function PaymentPageContent() {
                             <>
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                 <span>{t('processing')}</span>
+                            </>
+                        ) : orderData.isFreeTrial ? (
+                            <>
+                                <Gift size={20} className="group-hover:scale-110 transition-transform" />
+                                <span>{t('freeTrialGenerate')}</span>
                             </>
                         ) : (
                             <>

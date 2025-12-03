@@ -52,6 +52,12 @@ const translations = {
         deliverySuccess: 'Perfeito! Seu vídeo está sendo gerado e será enviado em breve.',
         deliveryValidationEmail: 'Por favor, insira um email válido',
         deliveryValidationPhone: 'Por favor, insira um número válido com DDD',
+        freeTrialBanner: 'Quer testar grátis? Faça login com sua conta do Google e ganhe um vídeo com até 3 fotos',
+        freeTrialLogin: 'Testar Grátis',
+        freeTrialGenerate: 'Gerar Vídeo Grátis',
+        freeTrialUsed: 'Teste grátis já utilizado',
+        freeTrialLimit: 'Máximo 3 fotos para teste grátis',
+        dismissBanner: 'Dispensar',
         faq: [
             {
                 q: 'Por que eu preciso pagar?',
@@ -59,7 +65,7 @@ const translations = {
             },
             {
                 q: 'Tem algum plano gratuito?',
-                a: 'Infelizmente ainda não conseguimos absorver os custos de geração de vídeos com IA, por isso cada geração é paga. No entanto, garantimos a qualidade do resultado final baseada em nossos exemplos.'
+                a: 'Sim! Faça login com sua conta Google e ganhe 1 vídeo grátis com até 3 fotos. Após isso, cada geração é paga.'
             },
             {
                 q: 'Quantos vídeos serão gerados?',
@@ -125,6 +131,12 @@ const translations = {
         deliverySuccess: 'Perfect! Your video is being generated and will be sent soon.',
         deliveryValidationEmail: 'Please enter a valid email',
         deliveryValidationPhone: 'Please enter a valid number with area code',
+        freeTrialBanner: 'Want to test for free? Log in with your Google account and get a video with up to 3 photos',
+        freeTrialLogin: 'Test Free',
+        freeTrialGenerate: 'Generate Free Video',
+        freeTrialUsed: 'Free trial already used',
+        freeTrialLimit: 'Maximum 3 photos for free trial',
+        dismissBanner: 'Dismiss',
         faq: [
             {
                 q: 'Why do I need to pay?',
@@ -132,7 +144,7 @@ const translations = {
             },
             {
                 q: 'Is there a free plan?',
-                a: 'Unfortunately, we cannot yet absorb the costs of AI video generation, so each generation is paid. However, we guarantee the quality of the final result based on our examples.'
+                a: 'Yes! Log in with your Google account and get 1 free video with up to 3 photos. After that, each generation is paid.'
             },
             {
                 q: 'How many videos will be generated?',

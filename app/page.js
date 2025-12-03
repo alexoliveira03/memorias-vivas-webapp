@@ -1,20 +1,25 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useLanguage, LanguageProvider } from '../context/LanguageContext';
-import { auth, storage, googleProvider } from '../lib/firebase';
+import { auth, storage, googleProvider, db } from '../lib/firebase';
 import { signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Upload, Music, Sparkles, Globe2, Zap, ArrowRight, Loader2, ChevronLeft, ChevronRight, Image as ImageIcon, LogOut } from 'lucide-react';
+import { Play, Upload, Music, Sparkles, Globe2, Zap, ArrowRight, Loader2, ChevronLeft, ChevronRight, Image as ImageIcon, LogOut, Clock } from 'lucide-react';
 import PhotoUpload from '../components/PhotoUpload';
 import Footer from '../components/Footer';
+import ExamplesCarousel from '../components/ExamplesCarousel';
+import FreeTrialBanner from '../components/FreeTrialBanner';
 
 function LandingPage() {
     const { t, setLang, lang } = useLanguage();
     const router = useRouter();
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [freeTrialAvailable, setFreeTrialAvailable] = useState(false);
+    const [checkingTrial, setCheckingTrial] = useState(false);
 
     // Dashboard State
     const [images, setImages] = useState([]);
@@ -25,9 +30,29 @@ function LandingPage() {
 
     // Auth - only track authenticated state, no auto-login
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 setUser(currentUser);
+                // Check if user has used free trial
+                setCheckingTrial(true);
+                try {
+                    const userDocRef = doc(db, 'users', currentUser.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists() && userDoc.data().freeTrialUsed) {
+                        setFreeTrialAvailable(false);
+                    } else {
+                        setFreeTrialAvailable(true);
+                    }
+                } catch (error) {
+                    console.error("Error checking free trial status:", error);
+                    // Default to true if check fails, backend/webhook will verify
+                    setFreeTrialAvailable(true);
+                } finally {
+                    setCheckingTrial(false);
+                }
+            } else {
+                setUser(null);
+                setFreeTrialAvailable(false);
             }
         });
         return () => unsubscribe();
@@ -103,7 +128,8 @@ function LandingPage() {
                 currency: lang === 'pt-BR' ? 'BRL' : 'USD',
                 userId: user?.uid || '', // Empty if not logged in
                 sessionId: getOrCreateSessionId(), // Always present
-                userEmail: user?.email || '' // Empty if not logged in
+                userEmail: user?.email || '', // Empty if not logged in
+                isFreeTrial: freeTrialAvailable && images.length <= 3 // Flag for payment page
             }));
 
             router.push('/payment');
@@ -131,7 +157,6 @@ function LandingPage() {
                         <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
                             <Sparkles size={16} className="text-white md:w-5 md:h-5" />
                         </div>
-                        <span className="text-lg md:text-xl font-bold tracking-tight">Memorias Vivas</span>
                     </div>
                     <div className="flex items-center gap-2 md:gap-4">
                         <button
@@ -173,6 +198,8 @@ function LandingPage() {
                     </div>
                 </div>
             </nav>
+
+            <FreeTrialBanner onLogin={handleLogin} user={user} />
 
             {/* Hero Section */}
             <main className="flex-1 flex flex-col">
@@ -233,7 +260,7 @@ function LandingPage() {
                                         iconColor: 'text-violet-400'
                                     },
                                     {
-                                        icon: Music,
+                                        icon: Clock,
                                         title: t('musicTitle'),
                                         desc: t('musicDesc'),
                                         color: 'from-fuchsia-500 to-pink-500',
@@ -322,7 +349,7 @@ function LandingPage() {
 
 
                                 {/* Generate Button */}
-                                <div className="mt-auto pt-6">
+                                <div className="mt-6">
                                     <button
                                         onClick={handleGenerate}
                                         disabled={images.length === 0 || uploading}
@@ -337,10 +364,15 @@ function LandingPage() {
                                         ) : (
                                             <>
                                                 <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-                                                {t('generateBtn')}
+                                                {freeTrialAvailable && images.length <= 3 ? t('freeTrialGenerate') : t('generateBtn')}
                                             </>
                                         )}
                                     </button>
+                                    {freeTrialAvailable && images.length <= 3 && (
+                                        <div className="text-center mt-2 text-sm text-emerald-400 font-medium">
+                                            {t('freeTrialLimit')}
+                                        </div>
+                                    )}
                                     {images.length > 0 && (
                                         <div className="flex items-center justify-center gap-2 mt-3 text-sm text-gray-400">
                                             <span>{t('total')}:</span>
@@ -424,6 +456,22 @@ function LandingPage() {
                                 )}
                             </main>
                         </div>
+                    </div>
+                </section>
+
+                {/* Examples Carousel Section */}
+                <section className="py-24 bg-gradient-to-b from-[#0a0a0f] to-black border-t border-white/5">
+                    <div className="container mx-auto px-6">
+                        <div className="text-center mb-16">
+                            <h2 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+                                {lang === 'pt-BR' ? 'Veja Exemplos Reais' : 'See Real Examples'}
+                            </h2>
+                            <p className="text-gray-400 text-lg">
+                                {lang === 'pt-BR' ? 'Transformamos suas memórias em vídeos incríveis' : 'We transform your memories into amazing videos'}
+                            </p>
+                        </div>
+
+                        <ExamplesCarousel />
                     </div>
                 </section>
 
