@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
     networks:
       - memorias-vivas-net
-      - traefik-public  # Connect to Traefik network
+      - portainer  # Connect to Traefik network
     deploy:
       mode: replicated
       replicas: 2  # 2 replicas para alta disponibilidade
@@ -47,5 +47,5 @@ networks:
   memorias-vivas-net:
     driver: overlay
     attachable: true
-  traefik-public:
-    external: true  # Use existing Traefik network
+  portainer:
+    external: true  # Use existing Portainer/Traefik network
