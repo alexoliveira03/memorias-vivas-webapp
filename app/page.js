@@ -129,7 +129,7 @@ function LandingPage() {
                 userId: user?.uid || '', // Empty if not logged in
                 sessionId: getOrCreateSessionId(), // Always present
                 userEmail: user?.email || '', // Empty if not logged in
-                isFreeTrial: freeTrialAvailable && images.length <= 3 // Flag for payment page
+                isFreeTrial: user && freeTrialAvailable && images.length <= 3 // Only for logged-in users with <=3 images
             }));
 
             router.push('/payment');
