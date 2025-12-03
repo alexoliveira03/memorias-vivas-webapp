@@ -1,12 +1,12 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Check, Shield, Zap } from 'lucide-react';
 import { useLanguage, LanguageProvider } from '../../context/LanguageContext';
 import PaymentModal from '../../components/PaymentModal';
 import DeliveryChoiceModal from '../../components/DeliveryChoiceModal';
 
-function PaymentPage() {
+function PaymentPageContent() {
     const { t, lang } = useLanguage();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -241,6 +241,18 @@ function PaymentPage() {
                 orderData={orderData}
             />
         </div>
+    );
+}
+
+function PaymentPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f] text-white">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-violet-500"></div>
+            </div>
+        }>
+            <PaymentPageContent />
+        </Suspense>
     );
 }
 
