@@ -132,17 +132,17 @@ function LandingPage() {
         <div className="min-h-screen flex flex-col bg-[#0a0a0f] text-white">
             {/* Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
-                <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
-                            <Sparkles size={20} className="text-white" />
+                <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2 md:gap-3">
+                        <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
+                            <Sparkles size={16} className="text-white md:w-5 md:h-5" />
                         </div>
-                        <span className="text-xl font-bold tracking-tight">Memorias Vivas</span>
+                        <span className="text-lg md:text-xl font-bold tracking-tight">Memorias Vivas</span>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         <button
                             onClick={toggleLang}
-                            className="flex items-center gap-2 px-4 py-2 rounded-full glass hover:bg-white/10 transition-all"
+                            className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 rounded-full glass hover:bg-white/10 transition-all"
                         >
                             <img
                                 src={lang === 'pt-BR'
@@ -150,9 +150,9 @@ function LandingPage() {
                                     : "https://flagcdn.com/w40/br.png"
                                 }
                                 alt={lang === 'pt-BR' ? "US Flag" : "Brazil Flag"}
-                                className="w-5 h-3.5 rounded-sm object-cover"
+                                className="w-4 h-3 md:w-5 md:h-3.5 rounded-sm object-cover"
                             />
-                            <span className="text-sm font-medium">{lang === 'pt-BR' ? 'EN' : 'PT'}</span>
+                            <span className="text-xs md:text-sm font-medium">{lang === 'pt-BR' ? 'EN' : 'PT'}</span>
                         </button>
                         {user ? (
                             <div className="flex items-center gap-3 pl-4 border-l border-white/10">
@@ -171,7 +171,7 @@ function LandingPage() {
                             <button
                                 onClick={handleLogin}
                                 disabled={loading}
-                                className="text-sm font-medium px-4 py-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 transition-colors disabled:opacity-50"
+                                className="text-xs md:text-sm font-medium px-3 py-2 md:px-4 md:py-2 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 transition-colors disabled:opacity-50 whitespace-nowrap"
                             >
                                 {loading ? t('processing') : t('login')}
                             </button>
@@ -205,7 +205,7 @@ function LandingPage() {
                                     <span className="text-sm font-medium text-violet-300">{t('aiPowered')}</span>
                                 </div>
 
-                                <h1 className="text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
                                     {t('heroTitle').split(' ')[0]}<br />
                                     <span className="text-gradient">{t('heroTitle').split(' ').slice(1).join(' ')}</span>
                                 </h1>
@@ -247,7 +247,7 @@ function LandingPage() {
                                     },
                                     {
                                         icon: Sparkles,
-                                        title: t('generateBtn'),
+                                        title: t('generateCardTitle'),
                                         desc: t('generateDesc'),
                                         color: 'from-amber-500 to-orange-500',
                                         iconColor: 'text-amber-400'
