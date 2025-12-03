@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Upload, Music, Sparkles, Globe2, Zap, ArrowRight, Loader2, ChevronLeft, ChevronRight, Image as ImageIcon, LogOut } from 'lucide-react';
 import PhotoUpload from '../components/PhotoUpload';
-import MusicSelector, { MUSIC_OPTIONS } from '../components/MusicSelector';
 import Footer from '../components/Footer';
 
 function LandingPage() {
@@ -19,7 +18,6 @@ function LandingPage() {
 
     // Dashboard State
     const [images, setImages] = useState([]);
-    const [selectedMusic, setSelectedMusic] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [previewIndex, setPreviewIndex] = useState(0);
 
@@ -81,7 +79,7 @@ function LandingPage() {
     const getCurrencySymbol = () => lang === 'pt-BR' ? 'R$' : '$';
 
     const handleGenerate = async () => {
-        if (images.length === 0 || !selectedMusic) return;
+        if (images.length === 0) return;
 
         setUploading(true);
         try {
@@ -97,13 +95,9 @@ function LandingPage() {
                 imageUrls.push(url);
             }
 
-            // Find the full music object or URL based on the selected ID
-            const selectedMusicOption = MUSIC_OPTIONS.find(m => m.id === selectedMusic);
-            const musicUrl = selectedMusicOption ? selectedMusicOption.url : selectedMusic;
-
             localStorage.setItem('pendingOrder', JSON.stringify({
                 images: imageUrls,
-                music: musicUrl,
+                music: '', // Music selection removed, handled by n8n default
                 duration: duration,
                 totalPrice: getTotalPrice(),
                 currency: lang === 'pt-BR' ? 'BRL' : 'USD',
@@ -325,23 +319,13 @@ function LandingPage() {
                                     </div>
                                 </div>
 
-                                {/* Music */}
-                                {images.length > 0 && (
-                                    <motion.div
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: 'auto' }}
-                                        className="space-y-4"
-                                    >
-                                        <label className="text-sm font-bold text-gray-200 block">{t('soundtrack')}</label>
-                                        <MusicSelector selectedMusic={selectedMusic} setSelectedMusic={setSelectedMusic} />
-                                    </motion.div>
-                                )}
+
 
                                 {/* Generate Button */}
                                 <div className="mt-auto pt-6">
                                     <button
                                         onClick={handleGenerate}
-                                        disabled={images.length === 0 || !selectedMusic || uploading}
+                                        disabled={images.length === 0 || uploading}
                                         className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold rounded-xl shadow-xl shadow-violet-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 text-lg group relative overflow-hidden"
                                     >
                                         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
@@ -357,7 +341,7 @@ function LandingPage() {
                                             </>
                                         )}
                                     </button>
-                                    {images.length > 0 && selectedMusic && (
+                                    {images.length > 0 && (
                                         <div className="flex items-center justify-center gap-2 mt-3 text-sm text-gray-400">
                                             <span>{t('total')}:</span>
                                             <span className="text-lg font-bold text-white">
