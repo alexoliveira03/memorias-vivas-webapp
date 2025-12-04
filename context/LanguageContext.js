@@ -61,11 +61,11 @@ const translations = {
         dismissBanner: 'Dispensar',
         faq: [
             {
-                q: 'Posso tirar foto da foto para enviar?',
+                q: 'Posso enviar uma foto da foto tirada pelo celular?',
                 a: 'Sim! Você pode enviar fotos de fotos antigas, quadros ou porta-retratos. Para melhores resultados, tente enquadrar bem a imagem e capture com a melhor qualidade possível. Evite reflexos e, se estiver fotografando um quadro ou porta-retrato com vidro, não use flash para evitar brilhos indesejados.'
             },
             {
-                q: 'Quanto tempo demora?',
+                q: 'Quanto tempo demora para receber meu video?',
                 a: 'A geração do vídeo depende da quantidade de imagens enviadas e pode levar de 30 minutos a 1 hora. Você receberá seu vídeo no meio de entrega escolhido (e-mail ou WhatsApp) assim que estiver pronto.'
             },
             {
@@ -75,14 +75,6 @@ const translations = {
             {
                 q: 'Tem algum plano gratuito?',
                 a: 'Infelizmente não temos um plano gratuito permanente, já que os custos de geração com IA são muito elevados para cada vídeo. Porém, você pode fazer um teste grátis! Basta fazer login com sua conta do Google e gerar 1 vídeo grátis com até 3 fotos.'
-            },
-            {
-                q: 'Quantos vídeos serão gerados?',
-                a: 'Um único vídeo completo será gerado, contendo uma animação sequencial de cada uma das fotos que você enviou, unidas com transições suaves.'
-            },
-            {
-                q: 'Posso gerar mais de um vídeo?',
-                a: 'Cada pagamento representa a geração de 1 vídeo único. Caso queira criar um novo vídeo com outras fotos ou músicas, basta realizar novamente o procedimento.'
             },
             {
                 q: 'Como funciona o pagamento?',

@@ -7,11 +7,12 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Upload, Music, Sparkles, Globe2, Zap, ArrowRight, Loader2, ChevronLeft, ChevronRight, Image as ImageIcon, LogOut, Clock } from 'lucide-react';
+import { Play, Upload, Music, Sparkles, Globe2, Zap, ArrowRight, Loader2, ChevronLeft, ChevronRight, Image as ImageIcon, LogOut, Clock, Mail, MessageCircle } from 'lucide-react';
 import PhotoUpload from '../components/PhotoUpload';
 import Footer from '../components/Footer';
 import ExamplesCarousel from '../components/ExamplesCarousel';
 import FreeTrialBanner from '../components/FreeTrialBanner';
+import CountryCodeSelect from '../components/CountryCodeSelect';
 
 function LandingPage() {
     const { t, setLang, lang } = useLanguage();
@@ -27,6 +28,11 @@ function LandingPage() {
     const [previewIndex, setPreviewIndex] = useState(0);
 
     const [duration, setDuration] = useState(5);
+
+    // Delivery method states
+    const [deliveryMethod, setDeliveryMethod] = useState('');
+    const [deliveryContact, setDeliveryContact] = useState('');
+    const [countryCode, setCountryCode] = useState('+55');
 
     // Auth - only track authenticated state, no auto-login
     useEffect(() => {
@@ -299,154 +305,139 @@ function LandingPage() {
                             <p className="text-gray-400 max-w-2xl mx-auto">{t('createDesc')}</p>
                         </div>
 
-                        <div className="flex flex-col lg:flex-row gap-8 glass rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
-                            {/* Left Sidebar - Controls (Mobile: shows first) */}
-                            <aside className="w-full lg:w-[450px] bg-[#0a0a0f]/50 lg:border-r border-white/5 overflow-y-auto p-8 flex flex-col gap-8 order-1 lg:order-1">
+                        <div className="max-w-3xl mx-auto glass rounded-3xl border border-white/10 shadow-2xl p-8 space-y-8">
 
-                                {/* Banner */}
-                                <div className="w-full py-3 px-4 rounded-xl glass bg-white/5 border border-white/10 text-center">
-                                    <span className="text-sm font-medium text-gray-300">
-                                        {lang === 'pt-BR'
-                                            ? 'Clique no espaço ao lado para enviar suas fotos'
-                                            : 'Click on the space to the right to upload your photos'}
+                            {/* Photo Upload Section */}
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-lg font-bold text-gray-200">{t('photos')}</label>
+                                    <span className="text-sm font-medium text-gray-400 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
+                                        {images.length}/10
                                     </span>
                                 </div>
+                                <PhotoUpload images={images} setImages={setImages} />
+                            </div>
 
-                                {/* Duration Selector */}
-                                <div className="space-y-4 order-2 lg:order-1">
-                                    <label className="text-sm font-bold text-gray-200 block">{t('durationTitle')}</label>
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {[5, 10].map((d) => (
-                                            <button
-                                                key={d}
-                                                onClick={() => setDuration(d)}
-                                                className={`p-4 rounded-xl border transition-all text-left relative overflow-hidden group ${duration === d
-                                                    ? 'border-violet-500 bg-violet-500/20'
-                                                    : 'border-white/10 bg-white/5 hover:bg-white/10'
-                                                    }`}
-                                            >
-                                                <div className="font-bold text-lg mb-1">{d}s</div>
-                                                <div className="text-xs text-gray-400">
-                                                    {getCurrencySymbol()} {lang === 'pt-BR' ? (d === 5 ? '2,90' : '5,90') : (d === 5 ? '0.90' : '1.80')} /{t('perImage')}
-                                                </div>
-                                                {duration === d && (
-                                                    <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                                                )}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-
-
-
-                                {/* Generate Button */}
-                                <div className="mt-6 order-3 lg:order-2">
-                                    <button
-                                        onClick={handleGenerate}
-                                        disabled={images.length === 0 || uploading}
-                                        className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold rounded-xl shadow-xl shadow-violet-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 text-lg group relative overflow-hidden"
-                                    >
-                                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                                        {uploading ? (
-                                            <>
-                                                <Loader2 size={20} className="animate-spin" />
-                                                {t('processing')}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-                                                {freeTrialAvailable && images.length <= 3 ? t('freeTrialGenerate') : t('generateBtn')}
-                                            </>
-                                        )}
-                                    </button>
-                                    {freeTrialAvailable && images.length <= 3 && (
-                                        <div className="text-center mt-2 text-sm text-emerald-400 font-medium">
-                                            {t('freeTrialLimit')}
-                                        </div>
-                                    )}
-                                    {images.length > 0 && (
-                                        <div className="flex items-center justify-center gap-2 mt-3 text-sm text-gray-400">
-                                            <span>{t('total')}:</span>
-                                            <span className="text-lg font-bold text-white">
-                                                {getCurrencySymbol()} {getTotalPrice()}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                            </aside>
-
-                            {/* Right Upload/Preview Area (Mobile: shows second) */}
-                            <main className="flex-1 bg-black/40 flex items-center justify-center p-6 lg:p-8 relative order-2 lg:order-2">
-                                {images.length > 0 ? (
-                                    <div className="w-full max-w-3xl flex flex-col gap-6">
-                                        {/* Main Preview */}
-                                        <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-[#050508] group">
-                                            <AnimatePresence mode="wait">
-                                                <motion.img
-                                                    key={previewIndex}
-                                                    src={images[previewIndex].preview}
-                                                    alt="Preview"
-                                                    className="w-full h-full object-contain"
-                                                    initial={{ opacity: 0, scale: 0.95 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.95 }}
-                                                    transition={{ duration: 0.2 }}
-                                                />
-                                            </AnimatePresence>
-
-                                            {/* Navigation */}
-                                            {images.length > 1 && (
-                                                <>
-                                                    <button
-                                                        onClick={() => setPreviewIndex((prev) => (prev - 1 + images.length) % images.length)}
-                                                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full glass hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100"
-                                                    >
-                                                        <ChevronLeft size={24} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => setPreviewIndex((prev) => (prev + 1) % images.length)}
-                                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full glass hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100"
-                                                    >
-                                                        <ChevronRight size={24} />
-                                                    </button>
-                                                </>
+                            {/* Duration Selector */}
+                            <div className="space-y-4">
+                                <label className="text-lg font-bold text-gray-200 block">{t('durationTitle')}</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {[5, 10].map((d) => (
+                                        <button
+                                            key={d}
+                                            onClick={() => setDuration(d)}
+                                            className={`p-4 rounded-xl border transition-all text-left relative overflow-hidden group ${duration === d
+                                                ? 'border-violet-500 bg-violet-500/20'
+                                                : 'border-white/10 bg-white/5 hover:bg-white/10'
+                                                }`}
+                                        >
+                                            <div className="font-bold text-lg mb-1">{d}s</div>
+                                            <div className="text-xs text-gray-400">
+                                                {getCurrencySymbol()} {lang === 'pt-BR' ? (d === 5 ? '2,90' : '5,90') : (d === 5 ? '0.90' : '1.80')} /{t('perImage')}
+                                            </div>
+                                            {duration === d && (
+                                                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
                                             )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
 
-                                            {/* Counter */}
-                                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full glass text-xs font-bold tracking-wider">
-                                                {previewIndex + 1} / {images.length}
-                                            </div>
-                                        </div>
+                            {/* Delivery Method Selector */}
+                            <div className="space-y-4">
+                                <label className="text-lg font-bold text-gray-200 block">
+                                    {lang === 'pt-BR' ? 'Como deseja receber?' : 'How do you want to receive it?'}
+                                </label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                        onClick={() => {
+                                            setDeliveryMethod('email');
+                                            if (user?.email) setDeliveryContact(user.email);
+                                        }}
+                                        className={`p-4 rounded-xl border transition-all text-left ${deliveryMethod === 'email'
+                                            ? 'border-violet-500 bg-violet-500/20'
+                                            : 'border-white/10 bg-white/5 hover:bg-white/10'
+                                            }`}
+                                    >
+                                        <Mail size={20} className="mb-2" />
+                                        <div className="font-medium">Email</div>
+                                    </button>
+                                    <button
+                                        onClick={() => setDeliveryMethod('whatsapp')}
+                                        className={`p-4 rounded-xl border transition-all text-left ${deliveryMethod === 'whatsapp'
+                                            ? 'border-violet-500 bg-violet-500/20'
+                                            : 'border-white/10 bg-white/5 hover:bg-white/10'
+                                            }`}
+                                    >
+                                        <MessageCircle size={20} className="mb-2" />
+                                        <div className="font-medium">WhatsApp</div>
+                                    </button>
+                                </div>
+                            </div>
 
-                                        {/* Thumbnails */}
-                                        <div className="flex gap-3 overflow-x-auto pb-4 px-1 scrollbar-hide justify-center">
-                                            {images.map((img, idx) => (
-                                                <button
-                                                    key={idx}
-                                                    onClick={() => setPreviewIndex(idx)}
-                                                    className={`flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${idx === previewIndex
-                                                        ? 'border-violet-500 scale-110 shadow-lg shadow-violet-500/30 z-10'
-                                                        : 'border-white/10 hover:border-white/30 opacity-60 hover:opacity-100'
-                                                        }`}
-                                                >
-                                                    <img src={img.preview} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
-                                                </button>
-                                            ))}
+                            {/* Delivery Contact Input */}
+                            {deliveryMethod && (
+                                <div className="space-y-3">
+                                    {deliveryMethod === 'whatsapp' ? (
+                                        <div className="flex gap-2">
+                                            <CountryCodeSelect
+                                                value={countryCode}
+                                                onChange={setCountryCode}
+                                            />
+                                            <input
+                                                type="tel"
+                                                value={deliveryContact}
+                                                onChange={(e) => setDeliveryContact(e.target.value)}
+                                                className="flex-1 min-w-0 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:border-violet-500 focus:outline-none transition-colors"
+                                                placeholder="(11) 98765-4321"
+                                            />
                                         </div>
-                                    </div>
-                                ) : (
-                                    <div className="w-full max-w-2xl">
-                                        {/* Upload Area - Shows on Mobile below banner */}
-                                        <div className="mb-8 lg:mb-0">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <label className="text-sm font-bold text-gray-200">{t('photos')}</label>
-                                                <span className="text-xs font-medium text-gray-400 bg-white/5 px-2.5 py-1 rounded-full border border-white/5">{images.length}/10</span>
-                                            </div>
-                                            <PhotoUpload images={images} setImages={setImages} />
-                                        </div>
+                                    ) : (
+                                        <input
+                                            type="email"
+                                            value={deliveryContact}
+                                            onChange={(e) => setDeliveryContact(e.target.value)}
+                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:border-violet-500 focus:outline-none transition-colors"
+                                            placeholder="seu@email.com"
+                                        />
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Generate Button */}
+                            <div>
+                                <button
+                                    onClick={handleGenerate}
+                                    disabled={images.length === 0 || uploading || !deliveryMethod || !deliveryContact}
+                                    className="w-full py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold rounded-xl shadow-xl shadow-violet-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 text-lg group relative overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                    {uploading ? (
+                                        <>
+                                            <Loader2 size={20} className="animate-spin" />
+                                            {t('processing')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
+                                            {freeTrialAvailable && images.length <= 3 ? t('freeTrialGenerate') : t('generateBtn')}
+                                        </>
+                                    )}
+                                </button>
+                                {freeTrialAvailable && images.length <= 3 && (
+                                    <div className="text-center mt-2 text-sm text-emerald-400 font-medium">
+                                        {t('freeTrialLimit')}
                                     </div>
                                 )}
-                            </main>
+                                {images.length > 0 && (
+                                    <div className="flex items-center justify-center gap-2 mt-3 text-sm text-gray-400">
+                                        <span>{t('total')}:</span>
+                                        <span className="text-lg font-bold text-white">
+                                            {getCurrencySymbol()} {getTotalPrice()}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </section>
