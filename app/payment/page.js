@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Check, Shield, Zap, Gift } from 'lucide-react';
 import { useLanguage, LanguageProvider } from '../../context/LanguageContext';
 import PaymentModal from '../../components/PaymentModal';
-import DeliveryChoiceModal from '../../components/DeliveryChoiceModal';
 import { db } from '../../lib/firebase';
 import { doc, setDoc } from 'firebase/firestore';
 
@@ -16,7 +15,6 @@ function PaymentPageContent() {
     const [orderData, setOrderData] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [modalContent, setModalContent] = useState({ title: '', message: '' });
-    const [showDeliveryChoice, setShowDeliveryChoice] = useState(false);
 
     useEffect(() => {
         const pending = localStorage.getItem('pendingOrder');
@@ -35,23 +33,17 @@ function PaymentPageContent() {
 
     // Auto-redirect after 10 seconds when success modal is shown
     useEffect(() => {
-        if (showModal && !showDeliveryChoice) {
+        if (showModal) {
             const timer = setTimeout(() => {
                 router.push('/');
             }, 10000); // 10 seconds
 
             return () => clearTimeout(timer);
         }
-    }, [showModal, showDeliveryChoice, router]);
+    }, [showModal, router]);
 
     const handlePaymentSuccess = async (order) => {
         if (loading) return;
-
-        // Show delivery choice modal instead of immediately triggering webhook
-        setShowDeliveryChoice(true);
-    };
-
-    const handleDeliveryChoice = async (deliveryMethod, deliveryContact) => {
         setLoading(true);
 
         try {
@@ -59,14 +51,14 @@ function PaymentPageContent() {
             console.log('[Payment Success] Triggering n8n workflow...');
 
             const n8nPayload = {
-                userId: orderData.userId || '', // Empty if not logged in
-                sessionId: orderData.sessionId, // Always present
-                images: orderData.images,
-                music: orderData.music,
-                duration: orderData.duration, // Video duration (5 or 10 seconds)
-                deliveryMethod, // 'email' or 'whatsapp'
-                deliveryContact, // email address or phone number
-                isFreeTrial: orderData.isFreeTrial || false
+                userId: order.userId || '', // Empty if not logged in
+                sessionId: order.sessionId, // Always present
+                images: order.images,
+                music: order.music,
+                duration: order.duration, // Video duration (5 or 10 seconds)
+                deliveryMethod: order.deliveryMethod, // 'email' or 'whatsapp'
+                deliveryContact: order.deliveryContact, // email address or phone number
+                isFreeTrial: order.isFreeTrial || false
             };
 
             console.log('[Payment Success] n8n payload:', n8nPayload);
@@ -83,13 +75,13 @@ function PaymentPageContent() {
                 console.log('[Payment Success] n8n workflow triggered successfully');
 
                 // If it was a free trial, mark it as used in Firestore
-                if (orderData.isFreeTrial && orderData.userId) {
+                if (order.isFreeTrial && order.userId) {
                     try {
-                        await setDoc(doc(db, 'users', orderData.userId), {
+                        await setDoc(doc(db, 'users', order.userId), {
                             freeTrialUsed: true,
                             lastUpdated: new Date()
                         }, { merge: true });
-                        console.log('Free trial marked as used for user:', orderData.userId);
+                        console.log('Free trial marked as used for user:', order.userId);
                     } catch (err) {
                         console.error('Error marking free trial as used:', err);
                     }
@@ -98,8 +90,7 @@ function PaymentPageContent() {
                 console.error('[Payment Success] n8n workflow trigger failed:', await n8nResponse.text());
             }
 
-            // Close delivery choice modal and show success message
-            setShowDeliveryChoice(false);
+            // Show success message
             setModalContent({
                 title: lang === 'pt-BR' ? 'Tudo Pronto!' : 'All Set!',
                 message: t('deliverySuccess'),
@@ -123,8 +114,7 @@ function PaymentPageContent() {
         // Check for free trial
         if (orderData.isFreeTrial) {
             console.log('[Payment] Processing free trial...');
-            setShowDeliveryChoice(true);
-            setLoading(false);
+            handlePaymentSuccess(orderData);
             return;
         }
 
@@ -265,12 +255,6 @@ function PaymentPageContent() {
                 }}
                 title={modalContent.title}
                 message={modalContent.message}
-            />
-
-            <DeliveryChoiceModal
-                isOpen={showDeliveryChoice}
-                onSubmit={handleDeliveryChoice}
-                orderData={orderData}
             />
         </div>
     );
