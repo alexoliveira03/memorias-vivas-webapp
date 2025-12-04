@@ -116,15 +116,38 @@ function LandingPage() {
         try {
             // Use userId if logged in, otherwise use sessionId
             const uploaderId = user?.uid || getOrCreateSessionId();
-            const imageUrls = [];
 
-            for (let i = 0; i < images.length; i++) {
-                const file = images[i].file;
-                const storageRef = ref(storage, `uploads/${uploaderId}/${Date.now()}_${i}_${file.name}`);
-                const snapshot = await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(snapshot.ref);
-                imageUrls.push(url);
-            }
+            console.log('[Upload] Starting parallel upload for', images.length, 'images');
+
+            // Import compression utility
+            const { compressImage } = await import('../lib/imageCompression');
+
+            // Upload all images in parallel with compression
+            const uploadPromises = images.map(async (image, i) => {
+                try {
+                    console.log(`[Upload] Compressing image ${i + 1}/${images.length}`);
+
+                    // Compress image before upload (max 1MB, max 1920px)
+                    const compressedFile = await compressImage(image.file, 1, 1920);
+
+                    console.log(`[Upload] Image ${i + 1} compressed from ${(image.file.size / 1024).toFixed(0)}KB to ${(compressedFile.size / 1024).toFixed(0)}KB`);
+
+                    // Upload to Firebase
+                    const storageRef = ref(storage, `uploads/${uploaderId}/${Date.now()}_${i}_${image.file.name}`);
+                    const snapshot = await uploadBytes(storageRef, compressedFile);
+                    const url = await getDownloadURL(snapshot.ref);
+
+                    console.log(`[Upload] Image ${i + 1}/${images.length} uploaded successfully`);
+                    return url;
+                } catch (err) {
+                    console.error(`[Upload] Failed to upload image ${i + 1}:`, err);
+                    throw err;
+                }
+            });
+
+            // Wait for all uploads to complete
+            const imageUrls = await Promise.all(uploadPromises);
+            console.log('[Upload] All images uploaded successfully');
 
             localStorage.setItem('pendingOrder', JSON.stringify({
                 images: imageUrls,
@@ -142,7 +165,7 @@ function LandingPage() {
 
             router.push('/payment');
         } catch (error) {
-            console.error("Error uploading images:", error);
+            console.error("[Upload] Error uploading images:", error);
             alert(lang === 'pt-BR'
                 ? "Erro ao fazer upload das imagens. Tente novamente."
                 : "Error uploading images. Please try again."
