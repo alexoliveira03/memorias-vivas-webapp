@@ -5,27 +5,35 @@ import { motion } from 'framer-motion';
 const EXAMPLES = [
     {
         type: 'image',
-        url: 'https://firebasestorage.googleapis.com/v0/b/memorias-vivas-eb4c0.firebasestorage.app/o/uploads%2Fsession-1764749518323-3c3pe3cdy%2F1764768968287_0_1000062363.jpg?alt=media&token=43723370-d16b-449c-8991-7e42e285288a'
+        url: 'https://firebasestorage.googleapis.com/v0/b/memorias-vivas-eb4c0.firebasestorage.app/o/uploads%2FtlK1akL5JzYvM5tqBP8fiuiST0c2%2F1764870568973_1_e5cf5aff-07c0-41a3-af06-80cb7dc5b2c6.jpeg?alt=media&token=0088b7ce-f8d4-4782-ba67-25bddaf8c95a'
     },
     {
         type: 'video',
-        url: 'https://cdn.shotstack.io/au/stage/ymu1cfr7y9/0c90fc8f-983d-440b-938a-fa93849f1f91.mp4'
+        url: '/examples/example1.mp4'
     },
     {
         type: 'image',
-        url: '/examples/example-baby.jpg'
+        url: 'https://firebasestorage.googleapis.com/v0/b/memorias-vivas-eb4c0.firebasestorage.app/o/uploads%2FtlK1akL5JzYvM5tqBP8fiuiST0c2%2F1764869559856_4_IMG_6677.jpeg?alt=media&token=0b4f0aef-73c3-49f0-b1c3-3b4d02bf7e9c'
     },
     {
         type: 'video',
-        url: 'https://cdn.shotstack.io/au/stage/ymu1cfr7y9/2446b9f9-5dfb-4fc2-9b63-adbf46c93d6e.mp4'
+        url: '/examples/example2.mp4'
     },
     {
         type: 'image',
-        url: '/examples/example-family.jpg'
+        url: 'https://firebasestorage.googleapis.com/v0/b/memorias-vivas-eb4c0.firebasestorage.app/o/uploads%2FtlK1akL5JzYvM5tqBP8fiuiST0c2%2F1764869559940_5_IMG_6680.jpeg?alt=media&token=e12e6cf0-90ac-4f73-95d2-e8a352085505'
     },
     {
         type: 'video',
-        url: 'https://cdn.shotstack.io/au/stage/ymu1cfr7y9/24f5c4ac-466f-4372-b651-a5bc60bb8082.mp4'
+        url: '/examples/example3.mp4'
+    },
+    {
+        type: 'image',
+        url: 'https://firebasestorage.googleapis.com/v0/b/memorias-vivas-eb4c0.firebasestorage.app/o/uploads%2FtlK1akL5JzYvM5tqBP8fiuiST0c2%2F1764869559591_0_IMG_6682.jpeg?alt=media&token=76d89850-973b-4c20-9daf-c8296718429e'
+    },
+    {
+        type: 'video',
+        url: '/examples/example4.mp4'
     }
 ];
 
