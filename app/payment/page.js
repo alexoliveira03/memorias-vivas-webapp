@@ -47,7 +47,29 @@ function PaymentPageContent() {
         setLoading(true);
 
         try {
-            // Call n8n webhook with all order data + delivery info
+            // Fetch coupon data from Stripe session if this was a paid order
+            let couponUsed = false;
+            let couponCode = '';
+
+            if (!order.isFreeTrial && searchParams.get('session_id')) {
+                try {
+                    const stripeSessionId = searchParams.get('session_id');
+                    console.log('[Payment Success] Fetching session details for coupon info:', stripeSessionId);
+
+                    const sessionResponse = await fetch(`/api/stripe/session-details?session_id=${stripeSessionId}`);
+                    if (sessionResponse.ok) {
+                        const sessionData = await sessionResponse.json();
+                        couponUsed = sessionData.couponUsed || false;
+                        couponCode = sessionData.couponCode || '';
+                        console.log('[Payment Success] Coupon data:', { couponUsed, couponCode });
+                    }
+                } catch (err) {
+                    console.error('[Payment Success] Error fetching coupon data:', err);
+                    // Continue without coupon data
+                }
+            }
+
+            // Call n8n webhook with all order data + delivery info + coupon info
             console.log('[Payment Success] Triggering n8n workflow...');
 
             const n8nPayload = {
@@ -58,7 +80,9 @@ function PaymentPageContent() {
                 duration: order.duration, // Video duration (5 or 10 seconds)
                 deliveryMethod: order.deliveryMethod, // 'email' or 'whatsapp'
                 deliveryContact: order.deliveryContact, // email address or phone number
-                isFreeTrial: order.isFreeTrial || false
+                isFreeTrial: order.isFreeTrial || false,
+                couponUsed: couponUsed,
+                couponCode: couponCode
             };
 
             console.log('[Payment Success] n8n payload:', n8nPayload);

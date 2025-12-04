@@ -135,7 +135,9 @@ function LandingPage() {
                 userId: user?.uid || '', // Empty if not logged in
                 sessionId: getOrCreateSessionId(), // Always present
                 userEmail: user?.email || '', // Empty if not logged in
-                isFreeTrial: user && freeTrialAvailable && images.length <= 3 // Only for logged-in users with <=3 images
+                isFreeTrial: user && freeTrialAvailable && images.length === 1, // Only for logged-in users with exactly 1 image
+                deliveryMethod: deliveryMethod,
+                deliveryContact: deliveryMethod === 'whatsapp' ? countryCode + deliveryContact.replace(/\D/g, '') : deliveryContact
             }));
 
             router.push('/payment');
@@ -420,11 +422,11 @@ function LandingPage() {
                                     ) : (
                                         <>
                                             <Sparkles size={20} className="group-hover:rotate-12 transition-transform" />
-                                            {freeTrialAvailable && images.length <= 3 ? t('freeTrialGenerate') : t('generateBtn')}
+                                            {freeTrialAvailable && images.length === 1 ? t('freeTrialGenerate') : t('generateBtn')}
                                         </>
                                     )}
                                 </button>
-                                {freeTrialAvailable && images.length <= 3 && (
+                                {freeTrialAvailable && images.length === 1 && (
                                     <div className="text-center mt-2 text-sm text-emerald-400 font-medium">
                                         {t('freeTrialLimit')}
                                     </div>
