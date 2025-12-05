@@ -53,11 +53,11 @@ const translations = {
         deliveryTimeWarning: 'O prazo de geração pode levar até 1h',
         deliveryValidationEmail: 'Por favor, insira um email válido',
         deliveryValidationPhone: 'Por favor, insira um número válido com DDD',
-        freeTrialBanner: 'Quer testar grátis? Faça login com sua conta do Google e ganhe um vídeo com 1 foto',
-        freeTrialLogin: 'Testar Grátis',
-        freeTrialGenerate: 'Gerar Vídeo Grátis',
+        freeTrialBanner: 'Faça login e ganhe 3 fotos grátis',
+        freeTrialLogin: 'Teste Grátis Agora!',
+        freeTrialGenerate: 'Gerar Grátis',
         freeTrialUsed: 'Teste grátis já utilizado',
-        freeTrialLimit: 'Máximo 1 foto para teste grátis',
+        freeTrialLimit: 'Máximo 3 fotos no teste grátis',
         dismissBanner: 'Dispensar',
         faq: [
             {
@@ -74,7 +74,7 @@ const translations = {
             },
             {
                 q: 'Tem algum plano gratuito?',
-                a: 'Infelizmente não temos um plano gratuito permanente, já que os custos de geração com IA são muito elevados para cada vídeo. Porém, você pode fazer um teste grátis! Basta fazer login com sua conta do Google e gerar 1 vídeo grátis com 1 foto.'
+                a: 'Infelizmente não temos um plano gratuito permanente, já que os custos de geração com IA são muito elevados. Porém, você pode fazer um teste grátis! Basta fazer login com sua conta do Google e animar até 3 fotos gratuitamente (escolha a duração que preferir: 5 ou 10 segundos por foto).'
             },
             {
                 q: 'Como funciona o pagamento?',
@@ -133,11 +133,11 @@ const translations = {
         deliveryTimeWarning: 'Generation time may take up to 1 hour',
         deliveryValidationEmail: 'Please enter a valid email',
         deliveryValidationPhone: 'Please enter a valid number with area code',
-        freeTrialBanner: 'Want to test for free? Log in with your Google account and get a video with 1 photo',
-        freeTrialLogin: 'Test Free',
-        freeTrialGenerate: 'Generate Free Video',
+        freeTrialBanner: 'Log in and get 3 photos for free',
+        freeTrialLogin: 'Try Free Now!',
+        freeTrialGenerate: 'Generate Free',
         freeTrialUsed: 'Free trial already used',
-        freeTrialLimit: 'Maximum 1 photo for free trial',
+        freeTrialLimit: 'Maximum 3 photos in free trial',
         dismissBanner: 'Dismiss',
         faq: [
             {
@@ -154,7 +154,7 @@ const translations = {
             },
             {
                 q: 'Is there a free plan?',
-                a: 'Unfortunately, we don\'t have a permanent free plan, as the AI generation costs are very high for each video. However, you can try it for free! Just log in with your Google account and generate 1 free video with 1 photo.'
+                a: 'Unfortunately, we don\'t have a permanent free plan, as AI generation costs are very high. However, you can try it for free! Just log in with your Google account and animate up to 3 photos for free (choose your preferred duration: 5 or 10 seconds per photo).'
             },
             {
                 q: 'How many videos will be generated?',

@@ -5,7 +5,7 @@ import { Check, Shield, Zap, Gift } from 'lucide-react';
 import { useLanguage, LanguageProvider } from '../../context/LanguageContext';
 import PaymentModal from '../../components/PaymentModal';
 import { db } from '../../lib/firebase';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 function PaymentPageContent() {
     const { t, lang } = useLanguage();
@@ -98,16 +98,22 @@ function PaymentPageContent() {
             if (n8nResponse.ok) {
                 console.log('[Payment Success] n8n workflow triggered successfully');
 
-                // If it was a free trial, mark it as used in Firestore
+                // If it was a free trial, increment the photos used counter
                 if (order.isFreeTrial && order.userId) {
                     try {
-                        await setDoc(doc(db, 'users', order.userId), {
-                            freeTrialUsed: true,
+                        const userDocRef = doc(db, 'users', order.userId);
+                        const userDoc = await getDoc(userDocRef);
+                        const currentCount = userDoc.exists() ? (userDoc.data().freeTrialPhotosUsed || 0) : 0;
+                        const newCount = currentCount + order.images.length;
+
+                        await setDoc(userDocRef, {
+                            freeTrialPhotosUsed: newCount,
                             lastUpdated: new Date()
                         }, { merge: true });
-                        console.log('Free trial marked as used for user:', order.userId);
+
+                        console.log(`[Free Trial] Updated count: ${currentCount} → ${newCount} (added ${order.images.length} photos)`);
                     } catch (err) {
-                        console.error('Error marking free trial as used:', err);
+                        console.error('[Free Trial] Error updating photo count:', err);
                     }
                 }
             } else {

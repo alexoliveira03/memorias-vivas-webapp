@@ -20,9 +20,9 @@ export async function POST(request) {
         // Calculate price on server side to prevent tampering
         let unitPrice = 0;
         if (currency === 'BRL') {
-            unitPrice = duration === 5 ? 2.90 : 5.90;
+            unitPrice = duration === 5 ? 1.90 : 3.50;
         } else {
-            unitPrice = duration === 5 ? 0.90 : 1.80;
+            unitPrice = duration === 5 ? 0.50 : 0.90;
         }
 
         // Stripe expects amount in cents

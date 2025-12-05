@@ -97,9 +97,9 @@ function LandingPage() {
     // Price Calculation
     const getPricePerImage = () => {
         if (lang === 'pt-BR') {
-            return duration === 5 ? 2.90 : 5.90;
+            return duration === 5 ? 1.90 : 3.50;
         } else {
-            return duration === 5 ? 0.90 : 1.80;
+            return duration === 5 ? 0.50 : 0.90;
         }
     };
 
@@ -358,7 +358,7 @@ function LandingPage() {
                                         >
                                             <div className="font-bold text-lg mb-1">{d}s</div>
                                             <div className="text-xs text-gray-400">
-                                                {getCurrencySymbol()} {lang === 'pt-BR' ? (d === 5 ? '2,90' : '5,90') : (d === 5 ? '0.90' : '1.80')} /{t('perImage')}
+                                                {getCurrencySymbol()} {lang === 'pt-BR' ? (d === 5 ? '1,90' : '3,50') : (d === 5 ? '0.50' : '0.90')} /{t('perImage')}
                                             </div>
                                             {duration === d && (
                                                 <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-violet-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
@@ -500,7 +500,7 @@ function LandingPage() {
                                 <h3 className="text-2xl font-bold mb-2">{t('shortDuration')}</h3>
                                 <p className="text-gray-400 mb-6">5 {t('seconds')} / {t('perImage')}</p>
                                 <div className="text-4xl font-bold mb-8 text-violet-400">
-                                    {getCurrencySymbol()} {lang === 'pt-BR' ? '2,90' : '0.90'}
+                                    {getCurrencySymbol()} {lang === 'pt-BR' ? '1,90' : '0.50'}
                                     <span className="text-sm text-gray-500 font-normal ml-2">/ {t('perImage')}</span>
                                 </div>
                                 <ul className="space-y-3 text-gray-300 mb-8">
@@ -522,7 +522,7 @@ function LandingPage() {
                                 <h3 className="text-2xl font-bold mb-2">{t('longDuration')}</h3>
                                 <p className="text-gray-400 mb-6">10 {t('seconds')} / {t('perImage')}</p>
                                 <div className="text-4xl font-bold mb-8 text-fuchsia-400">
-                                    {getCurrencySymbol()} {lang === 'pt-BR' ? '5,90' : '1.80'}
+                                    {getCurrencySymbol()} {lang === 'pt-BR' ? '3,50' : '0.90'}
                                     <span className="text-sm text-gray-500 font-normal ml-2">/ {t('perImage')}</span>
                                 </div>
                                 <ul className="space-y-3 text-gray-300 mb-8">
