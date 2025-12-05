@@ -13,6 +13,7 @@ import Footer from '../components/Footer';
 import ExamplesCarousel from '../components/ExamplesCarousel';
 import FreeTrialBanner from '../components/FreeTrialBanner';
 import CountryCodeSelect from '../components/CountryCodeSelect';
+import * as gtag from '../lib/gtag';
 
 function LandingPage() {
     const { t, setLang, lang } = useLanguage();
@@ -68,6 +69,8 @@ function LandingPage() {
         setLoading(true);
         try {
             await signInWithPopup(auth, googleProvider);
+            // Track successful login
+            gtag.trackLogin('google');
         } catch (error) {
             // Silently handle popup close (user cancelled login)
             if (error.code === 'auth/popup-closed-by-user') {
@@ -148,6 +151,9 @@ function LandingPage() {
             // Wait for all uploads to complete
             const imageUrls = await Promise.all(uploadPromises);
             console.log('[Upload] All images uploaded successfully');
+
+            // Track photo upload
+            gtag.trackPhotoUpload(images.length);
 
             localStorage.setItem('pendingOrder', JSON.stringify({
                 images: imageUrls,

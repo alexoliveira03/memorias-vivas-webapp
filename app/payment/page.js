@@ -6,6 +6,7 @@ import { useLanguage, LanguageProvider } from '../../context/LanguageContext';
 import PaymentModal from '../../components/PaymentModal';
 import { db } from '../../lib/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import * as gtag from '../../lib/gtag';
 
 function PaymentPageContent() {
     const { t, lang } = useLanguage();
@@ -112,9 +113,21 @@ function PaymentPageContent() {
                         }, { merge: true });
 
                         console.log(`[Free Trial] Updated count: ${currentCount} → ${newCount} (added ${order.images.length} photos)`);
+
+                        // Track free trial usage
+                        gtag.trackFreeTrialUsed(order.images.length);
                     } catch (err) {
                         console.error('[Free Trial] Error updating photo count:', err);
                     }
+                } else {
+                    // Track paid purchase
+                    const sessionId = searchParams.get('session_id') || 'free_trial';
+                    gtag.trackPaymentCompleted(
+                        order.totalPrice,
+                        order.currency,
+                        order.images.length,
+                        sessionId
+                    );
                 }
             } else {
                 console.error('[Payment Success] n8n workflow trigger failed:', await n8nResponse.text());
