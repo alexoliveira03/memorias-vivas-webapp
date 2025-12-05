@@ -164,7 +164,7 @@ function LandingPage() {
                 userId: user?.uid || '', // Empty if not logged in
                 sessionId: getOrCreateSessionId(), // Always present
                 userEmail: user?.email || '', // Empty if not logged in
-                isFreeTrial: user && freeTrialAvailable && images.length === 1, // Only for logged-in users with exactly 1 image
+                isFreeTrial: user && freeTrialAvailable && images.length \u003c= 3, // Only for logged-in users with exactly 1 image
                 deliveryMethod: deliveryMethod,
                 deliveryContact: deliveryMethod === 'whatsapp' ? countryCode + deliveryContact.replace(/\D/g, '') : deliveryContact
             }));
@@ -583,3 +583,4 @@ export default function Page() {
         </LanguageProvider>
     );
 }
+
