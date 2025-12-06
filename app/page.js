@@ -164,7 +164,7 @@ function LandingPage() {
                 userId: user?.uid || '', // Empty if not logged in
                 sessionId: getOrCreateSessionId(), // Always present
                 userEmail: user?.email || '', // Empty if not logged in
-                isFreeTrial: user && freeTrialAvailable && images.length === 1, // Only for logged-in users with exactly 1 image
+                isFreeTrial: user && freeTrialAvailable && images.length <= 3, // Logged-in users with up to 3 photos
                 deliveryMethod: deliveryMethod,
                 deliveryContact: deliveryMethod === 'whatsapp' ? countryCode + deliveryContact.replace(/\D/g, '') : deliveryContact
             }));
